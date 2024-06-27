@@ -26,7 +26,7 @@ if($funcion != null){
     
     switch ($funcion)
     {
-        // simular torneo
+        // SIMULAR TORNEO
         case 'simularTorneo':
             if($tipoTorneo !== "masculino" && $tipoTorneo !== "femenino")
                 returnError( "Debe seleccionar tipo de torneo masculino o femenino" );
@@ -37,7 +37,6 @@ if($funcion != null){
                 if( !esPotenciaDeDos(count($data)) )
                     returnError("La cantidad de jugadores debe ser potencia de 2");
                 
-                // Iterar sobre cada jugador
                 foreach ($data as $jugador) {
                     $jugadores[] = new Jugador( $jugador['nombre'],  $jugador['habilidad'], $tipoTorneo,  $jugador['fuerza'],  $jugador['velocidad'],  $jugador['tiempo_reaccion'] );
                 }
@@ -47,7 +46,7 @@ if($funcion != null){
             }
             break;
 
-        // get torneos
+        // GET TORNEOS
         case 'getTorneos':
             $id = isset($_POST['id']) ? $_POST['id'] : null;
             $fecha = isset($_POST['fecha']) ? $_POST['fecha'] : null;
