@@ -20,7 +20,8 @@ class Torneo {
             throw new Exception("No se puede conectar con la base de datos");
 
         if( $repositorioJugadores != null ){
-            //crear id de torneo
+            
+            // CREAR ID DE TORNEO
             $date = date( 'Y/m/d', time() );
             $sql = "INSERT INTO torneos (fecha) VALUES (:fecha)";
             $stmt = $pdo->prepare($sql);
@@ -28,7 +29,7 @@ class Torneo {
             $stmt->execute();
             $this->torneoId = $pdo->lastInsertId();
     
-            // Validar que los jugadores sean del tipo correcto
+            // VALIDAR JUGADORES TIPO CORRECTO
             foreach ($repositorioJugadores->getAll() as $jugador) {
                 if ($jugador->getTipo() !== $tipo)
                     throw new Exception("Todos los jugadores deben ser del tipo " . $tipo);
@@ -42,14 +43,13 @@ class Torneo {
     {
         $jugadores = $this->repositorioJugadores->getAll();
         $rondaNum = 1;
-        // Simular el torneo hasta que quede un único ganador
+        // SIMULAR PARTIDOS HASTA QUE QUEDE UN SOLO JUGADOR GANADOR
         while (count($jugadores) > 1) {
-            // Actualizar jugadores para la siguiente ronda
+            // ACTUALIZAR JUGADORES PARA SIGUIENTE RONDA
             $ronda = $this->jugarRonda($jugadores, $rondaNum);
             $jugadores = $ronda[0];
             $this->rondas[] = $ronda[1];
             $rondaNum++;
-           # echo Fin de la ronda<br>";
         }
         $this->ganador = $jugadores[0];
         $this->guardarTorneo();
@@ -59,30 +59,19 @@ class Torneo {
 
     private function jugarRonda($jugadores,$rondaNum)
     {
-        // Simular los partidos de la ronda actual y retornar ganadores,partidos
+        // SIMULAR PARTIDOS RONDA ACTUAL Y RETORNAR ganadores,partidos
         $ganadores = [];
         $partidos = [];
         for ($i = 0; $i < count($jugadores); $i += 2) {
             if ($i + 1 < count($jugadores)) {
                 $jugador1 = $jugadores[$i];
-                $jugador2 = $jugadores[$i + 1];                    
-                // Simular el partido entre jugador1 y jugador2
+                $jugador2 = $jugadores[$i + 1];
                 $ganador = $this->simularPartido($jugador1, $jugador2);
                 $partidoInfo = $jugador1->getNombre() . " VS. " . $jugador2->getNombre() . ' - Ganador: ' . $ganador->getNombre();
                 $ganadores[] = $ganador;
                 $partidos[] = $partidoInfo;
 
-                $this->guardarPartido($partidoInfo, $rondaNum, $ganador->getNombre() );
-        
-                //guardar en tabla partidos
-                /*
-                    id
-                    info => $partido
-                    torneo_id
-
-
-                */
-                // fin ronda
+                $this->guardarPartido($partidoInfo, $rondaNum, $ganador->getNombre() ); 
             }
         }
         return [$ganadores , $partidos];
@@ -100,7 +89,6 @@ class Torneo {
         $habilidadTotalJugador2 = $jugador2->getNivelHabilidad();
 
         if ($this->tipo === "masculino") {
-            // En el torneo masculino, se considera fuerza y velocidad
             $habilidadTotalJugador1 += $jugador1->getFuerza() + $jugador1->getVelocidad();
             $habilidadTotalJugador2 += $jugador2->getFuerza() + $jugador2->getVelocidad();
         } elseif ($this->tipo === "femenino") {
@@ -108,20 +96,18 @@ class Torneo {
             $habilidadTotalJugador2 += $jugador2->getTiempoReaccion();
         }
 
-        // Simulación del enfrentamiento, factor suerte
+        // FACTOR SUERTE
         $suerte1 = rand(0, 20);
         $suerte2 = rand(0, 20);
 
-        // Suma de habilidad total más suerte
+        // PUNTAJE TOTAL
         $puntajeJugador1 = $habilidadTotalJugador1 + $suerte1;
         $puntajeJugador2 = $habilidadTotalJugador2 + $suerte2;
 
-        // Determinar al ganador
+        // DETERMINAR GANADOR
         if ($puntajeJugador1 > $puntajeJugador2) {
-            #echo "{$jugador1->getNombre()} VS {$jugador2->getNombre()} - Ganador: {$jugador1->getNombre()}<br>";
             return $jugador1;
         } else {
-            #echo "{$jugador1->getNombre()} VS {$jugador2->getNombre()} - Ganador: {$jugador2->getNombre()}<br>";
             return $jugador2;
         }
     }
