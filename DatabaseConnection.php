@@ -1,7 +1,8 @@
 <?php
 
 
-class DatabaseConnection {
+class DatabaseConnection
+{
     private $dbHost;
     private $dbName;
     private $dbUser;
@@ -9,14 +10,16 @@ class DatabaseConnection {
     private $pdo;
  
 
-    public function __construct() {
-        $this->dbHost = "localhost";
-        $this->dbName = "challenge_geopagos";
+    public function __construct()
+    {
+        $this->dbHost = "mysql4";
+        $this->dbName = "challenge";
         $this->dbUser = "root";
-        $this->dbPass = "";
+        $this->dbPass = "123";
     }
 
-    public function connect() {
+    public function connect()
+    { 
         try {
             $this->pdo = new PDO("mysql:host=$this->dbHost;dbname=$this->dbName", $this->dbUser, $this->dbPass);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -27,13 +30,15 @@ class DatabaseConnection {
         }
     }
 
-    public function disconnect() {
+    public function disconnect()
+    {
         if ($this->pdo != null) {
             $this->pdo = null;
         }
     }
 
-    public function __destruct() {
+    public function __destruct()
+    {
         $this->disconnect();
     }
 }
