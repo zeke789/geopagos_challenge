@@ -1,0 +1,143 @@
+openapi: "3.0.0"
+info:
+  title: API de Torneos de Tenis
+  description: API para gestionar y simular torneos de tenis masculinos y femeninos.
+  version: 1.0.0
+servers:
+  - url: http://ip172-18-0-102-cq1dgpiim2rg00d3j120-80.direct.labs.play-with-docker.com
+paths:
+  /getTorneos:
+    post:
+      summary: Obtener torneos según filtros opcionales
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  nullable: true
+                  default: ""
+                  description: ID del torneo a buscar (opcional)
+                fecha:
+                  type: string
+                  nullable: true
+                  default: ""
+                  format: date
+                  description: Fecha del torneo a buscar (opcional)
+                ronda:
+                  type: integer
+                  nullable: true
+                  default: ""
+                  description: Número de ronda del torneo a buscar (opcional)
+      responses:
+        '200':
+          description: Torneos encontrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: ID del torneo
+                    nombre:
+                      type: string
+                      description: Nombre del torneo
+                    fecha:
+                      type: string
+                      format: date
+                      description: Fecha del torneo
+                    ronda:
+                      type: integer
+                      description: Número de ronda del torneo
+        '404':
+          description: No se encontraron torneos con los parámetros recibidos
+
+  /simularTorneo:
+    post:
+      summary: Simular un torneo
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                tipo:
+                  type: string
+                  enum: [masculino, femenino]
+                  description: Tipo de torneo a simular (obligatorio)
+                jugadores:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      nombre:
+                        type: string
+                        description: Nombre del jugador
+                      habilidad:
+                        type: integer
+                        description: Habilidad del jugador
+                      fuerza:
+                        type: integer
+                        description: Fuerza del jugador
+                      velocidad:
+                        type: integer
+                        description: Velocidad del jugador
+                      tiempo_reaccion:
+                        type: integer
+                        description: Tiempo de reacción del jugador
+                  minItems: 4  # Mínimo 4 jugadores por defecto
+                  example:
+                    - nombre: Jugador1
+                      habilidad: 75
+                      fuerza: 72
+                      velocidad: 75
+                      tiempo_reaccion: 0
+                    - nombre: Jugador2
+                      habilidad: 70
+                      fuerza: 65
+                      velocidad: 50
+                      tiempo_reaccion: 0
+                    - nombre: Jugador3
+                      habilidad: 75
+                      fuerza: 65
+                      velocidad: 72
+                      tiempo_reaccion: 0
+                    - nombre: Jugador4
+                      habilidad: 60
+                      fuerza: 68
+                      velocidad: 80
+                      tiempo_reaccion: 0
+                  description: Lista de jugadores a participar en el torneo (obligatorio)
+      responses:
+        '200':
+          description: Resultados del torneo simulado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ganador:
+                    type: string
+                    description: Nombre del jugador ganador
+                  resultados:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        jugador:
+                          type: string
+                          description: Nombre del jugador
+                        puntaje:
+                          type: integer
+                          description: Puntaje obtenido por el jugador
+        '400':
+          description: Error en los parámetros enviados
+        '404':
+          description: Tipo de torneo inválido o no se especificaron jugadores
