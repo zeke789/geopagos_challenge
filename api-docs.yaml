@@ -4,7 +4,7 @@ info:
   description: API para gestionar y simular torneos de tenis masculinos y femeninos.
   version: 1.0.0
 servers:
-  - url: http://ip172-18-0-102-cq1dgpiim2rg00d3j120-80.direct.labs.play-with-docker.com
+  - url: http://ip172-19-0-69-cq1gveq91nsg00cmijtg-80.direct.labs.play-with-docker.com/
 paths:
   /getTorneos:
     post:
@@ -110,8 +110,8 @@ paths:
                       velocidad: 72
                       tiempo_reaccion: 0
                     - nombre: Jugador4
-                      habilidad: 60
-                      fuerza: 68
+                      habilidad: 64
+                      fuerza: 66
                       velocidad: 80
                       tiempo_reaccion: 0
                   description: Lista de jugadores a participar en el torneo (obligatorio)
