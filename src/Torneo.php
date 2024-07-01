@@ -19,6 +19,11 @@ class Torneo {
         if($pdo == null)
             throw new Exception("No se puede conectar con la base de datos");
 
+        // !VERIFICAR TIPO
+        if($tipo !== "masculino" && $tipo !== "femenino")
+            throw new Exception("Debe seleccionar tipo de torneo masculino o femenino");
+            
+
         if( $repositorioJugadores != null ){
             
             // CREAR ID DE TORNEO
@@ -105,11 +110,12 @@ class Torneo {
         $puntajeJugador2 = $habilidadTotalJugador2 + $suerte2;
 
         // DETERMINAR GANADOR
-        if ($puntajeJugador1 > $puntajeJugador2) {
-            return $jugador1;
-        } else {
-            return $jugador2;
-        }
+        return  $puntajeJugador1 > $puntajeJugador2 ? $jugador1 : $jugador2;
+    }
+
+    public function getTorneoId()
+    {
+        return $this->torneoId;
     }
 
     public function getGanador()
@@ -161,15 +167,16 @@ class Torneo {
                     'ronda', p.ronda
                 ) SEPARATOR ','), ']') AS partidos
             FROM 
-                Torneos t
+                torneos t
             LEFT JOIN 
-                Partidos p ON t.id = p.torneo_id";
+                partidos p ON t.id = p.torneo_id";
 
         if ($id !== null)
-            $sql .= " WHERE t.fecha = :fecha";
+            $sql .= " WHERE t.id = :id";
 
-        if ($fecha !== null)
+        if ($fecha !== null){
             $sql .= " WHERE t.fecha = :fecha";
+        }
 
         if ($ronda !== null)
             $sql .= " WHERE p.ronda = :ronda";
@@ -187,6 +194,7 @@ class Torneo {
             $stmt->bindParam(':ronda', $ronda);
 
         $stmt->execute();
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC); 
     }
     

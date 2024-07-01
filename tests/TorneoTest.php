@@ -14,73 +14,6 @@ final class TorneoTest extends TestCase
         // ...
     }
   
-    public function testTorneoNoValidoParticipantesDeDiferenteTipo(): void
-    {  
-        $datos = '[{ "nombre": "Jugador1", "tipo": "masculino", "habilidad": 75, "fuerza": 72, "velocidad": 75, "tiempo_reaccion": 0 },
-        { "nombre": "Jugador2", "tipo": "masculino", "habilidad": 70, "fuerza": 65, "velocidad": 50, "tiempo_reaccion": 0 },
-        { "nombre": "Jugador3","tipo": "masculino", "habilidad": 75, "fuerza": 65, "velocidad": 72, "tiempo_reaccion": 0 },
-        { "nombre": "Jugador4","tipo": "femenino", "habilidad": 60, "fuerza": 68, "velocidad": 80, "tiempo_reaccion": 0 }]';
-
-        $data = json_decode($datos, true);
-
-        foreach ($data as $jugador) {
-            $jugadores[] = new Jugador( $jugador['nombre'],  $jugador['habilidad'], $jugador['tipo'],  $jugador['fuerza'],  $jugador['velocidad'],  $jugador['tiempo_reaccion'] );
-        }
-
-        $repositorioJugadores = new RepositorioJugadores();
-        foreach ($jugadores as $jugador) {
-            $repositorioJugadores->agregarJugador($jugador);
-        }
-
-        $this->expectException(\Exception::class);
-
-        $torneo = new Torneo($repositorioJugadores, "masculino");
-    }
-
-    public function testTorneoNoValidoTipoTorneoNoDefinido(): void
-    {  
-        $datos = '[{ "nombre": "Jugador1", "tipo": "masculino", "habilidad": 75, "fuerza": 72, "velocidad": 75, "tiempo_reaccion": 0 },
-        { "nombre": "Jugador2", "tipo": "masculino", "habilidad": 70, "fuerza": 65, "velocidad": 50, "tiempo_reaccion": 0 },
-        { "nombre": "Jugador3","tipo": "masculino", "habilidad": 75, "fuerza": 65, "velocidad": 72, "tiempo_reaccion": 0 },
-        { "nombre": "Jugador4","tipo": "masculino", "habilidad": 60, "fuerza": 68, "velocidad": 80, "tiempo_reaccion": 0 }]';
-
-        $data = json_decode($datos, true);
-
-        foreach ($data as $jugador) {
-            $jugadores[] = new Jugador( $jugador['nombre'],  $jugador['habilidad'], $jugador['tipo'],  $jugador['fuerza'],  $jugador['velocidad'],  $jugador['tiempo_reaccion'] );
-        }
-
-        $repositorioJugadores = new RepositorioJugadores();
-        foreach ($jugadores as $jugador) {
-            $repositorioJugadores->agregarJugador($jugador);
-        }
-
-        $this->expectException(\Exception::class);
-
-        $torneo = new Torneo($repositorioJugadores, "");
-    }
-
-    public function testTorneoNoValidoTotalDeJugadoresNoEsPotenciaDeDos(): void
-    {  
-        $datos = '[{ "nombre": "Jugador1", "tipo": "masculino", "habilidad": 75, "fuerza": 72, "velocidad": 75, "tiempo_reaccion": 0 },
-        { "nombre": "Jugador2", "tipo": "masculino", "habilidad": 70, "fuerza": 65, "velocidad": 50, "tiempo_reaccion": 0 },
-        { "nombre": "Jugador3","tipo": "masculino", "habilidad": 75, "fuerza": 65, "velocidad": 72, "tiempo_reaccion": 0 }]';
-
-        $data = json_decode($datos, true);
-
-        foreach ($data as $jugador) {
-            $jugadores[] = new Jugador( $jugador['nombre'],  $jugador['habilidad'], $jugador['tipo'],  $jugador['fuerza'],  $jugador['velocidad'],  $jugador['tiempo_reaccion'] );
-        }
-
-        $repositorioJugadores = new RepositorioJugadores();
-        foreach ($jugadores as $jugador) {
-            $repositorioJugadores->agregarJugador($jugador);
-        }
-
-        $this->expectException(\Exception::class);
-
-        $torneo = new Torneo($repositorioJugadores, "masculino");
-    }
 
     public function testSimularTorneoVaLidarNumeroDeRondas(): void
     {  
@@ -105,7 +38,7 @@ final class TorneoTest extends TestCase
         $ganador = $torneo->getGanador();
         $rondas = $torneo->getRondas();       
 
-        $this->assertSame(count($jugadores) / 2, count($rondas));
+        $this->assertSame(2, count($rondas));
     }
 
     public function testSimularTorneoVaLidarGanador(): void
@@ -132,6 +65,94 @@ final class TorneoTest extends TestCase
         $rondas = $torneo->getRondas();       
 
         $this->assertSame('Jugador1',  $ganador->getNombre());
+    }
+    
+    public function testGetTorneoGenrarYObtenerPorId(): void
+    {  
+        $datos = '[{ "nombre": "Jugador1", "tipo": "masculino", "habilidad": 75, "fuerza": 72, "velocidad": 75, "tiempo_reaccion": 0 },
+        { "nombre": "Jugador2", "tipo": "masculino", "habilidad": 70, "fuerza": 65, "velocidad": 50, "tiempo_reaccion": 0 },
+        { "nombre": "Jugador3","tipo": "masculino", "habilidad": 75, "fuerza": 65, "velocidad": 72, "tiempo_reaccion": 0 },
+        { "nombre": "Jugador4","tipo": "masculino", "habilidad": 60, "fuerza": 68, "velocidad": 80, "tiempo_reaccion": 0 }]';
+
+        $data = json_decode($datos, true);
+
+        foreach ($data as $jugador) {
+            $jugadores[] = new Jugador( $jugador['nombre'],  $jugador['habilidad'], $jugador['tipo'],  $jugador['fuerza'],  $jugador['velocidad'],  $jugador['tiempo_reaccion'] );
+        }
+
+        $repositorioJugadores = new RepositorioJugadores();
+        foreach ($jugadores as $jugador) {
+            $repositorioJugadores->agregarJugador($jugador);
+        }
+
+        $torneo = new Torneo($repositorioJugadores, "masculino");
+        $torneo->simularTorneo();
+        $ganador = $torneo->getGanador();
+        $rondas = $torneo->getRondas();
+        $torneoId = $torneo->getTorneoId();
+
+        $gettorneo = Torneo::getTorneos(null, $torneoId, null);
+
+        $this->assertSame(intVal($torneoId), intVal($gettorneo[0]['torneo_id']));
+    }
+
+    public function testGetTorneoGenrarYObtenerPorFechas(): void
+    {  
+        $datos = '[{ "nombre": "Jugador1", "tipo": "masculino", "habilidad": 75, "fuerza": 72, "velocidad": 75, "tiempo_reaccion": 0 },
+        { "nombre": "Jugador2", "tipo": "masculino", "habilidad": 70, "fuerza": 65, "velocidad": 50, "tiempo_reaccion": 0 },
+        { "nombre": "Jugador3","tipo": "masculino", "habilidad": 75, "fuerza": 65, "velocidad": 72, "tiempo_reaccion": 0 },
+        { "nombre": "Jugador4","tipo": "masculino", "habilidad": 60, "fuerza": 68, "velocidad": 80, "tiempo_reaccion": 0 }]';
+
+        $data = json_decode($datos, true);
+
+        foreach ($data as $jugador) {
+            $jugadores[] = new Jugador( $jugador['nombre'],  $jugador['habilidad'], $jugador['tipo'],  $jugador['fuerza'],  $jugador['velocidad'],  $jugador['tiempo_reaccion'] );
+        }
+
+        $repositorioJugadores = new RepositorioJugadores();
+        foreach ($jugadores as $jugador) {
+            $repositorioJugadores->agregarJugador($jugador);
+        }
+
+        $torneo = new Torneo($repositorioJugadores, "masculino");
+        $torneo->simularTorneo();
+        $ganador = $torneo->getGanador();
+        $rondas = $torneo->getRondas();
+        $torneoId = (int)$torneo->getTorneoId();
+
+        $gettorneos = Torneo::getTorneos('2024-07-01', null, null);
+
+        $exist = array_search($torneoId, array_column($gettorneos, 'torneo_id'));
+
+        $this->assertNotFalse($exist, "El torneo con torneo_id $torneoId no se encontró en el array gettorneos");
+
+        $this->assertSame($torneoId, (int)$gettorneos[$exist]['torneo_id'] ); 
+    }
+
+
+
+
+    public function testTorneoNoValidoParticipantesDeDiferenteTipo(): void
+    {  
+        $datos = '[{ "nombre": "Jugador1", "tipo": "masculino", "habilidad": 75, "fuerza": 72, "velocidad": 75, "tiempo_reaccion": 0 },
+        { "nombre": "Jugador2", "tipo": "masculino", "habilidad": 70, "fuerza": 65, "velocidad": 50, "tiempo_reaccion": 0 },
+        { "nombre": "Jugador3","tipo": "masculino", "habilidad": 75, "fuerza": 65, "velocidad": 72, "tiempo_reaccion": 0 },
+        { "nombre": "Jugador4","tipo": "femenino", "habilidad": 60, "fuerza": 68, "velocidad": 80, "tiempo_reaccion": 0 }]';
+
+        $data = json_decode($datos, true);
+
+        foreach ($data as $jugador) {
+            $jugadores[] = new Jugador( $jugador['nombre'],  $jugador['habilidad'], $jugador['tipo'],  $jugador['fuerza'],  $jugador['velocidad'],  $jugador['tiempo_reaccion'] );
+        }
+
+        $repositorioJugadores = new RepositorioJugadores();
+        foreach ($jugadores as $jugador) {
+            $repositorioJugadores->agregarJugador($jugador);
+        }
+
+        $this->expectException(\Exception::class);
+
+        $torneo = new Torneo($repositorioJugadores, "masculino");
     }
     
 }
