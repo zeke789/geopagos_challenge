@@ -51,6 +51,10 @@ switch ($uri) {
 
     case 'simularTorneo':
 
+        $tipoTorneo = isset($_POST['tipo']) ? $_POST['tipo'] : null;
+        $jugadoresParam = isset($_POST['jugadores']) ? $_POST['jugadores'] : null;
+        $jugadores = [];
+
         try {
             // !VERIFICAR PARAM JUGADORES
             if( $jugadoresParam === null )
@@ -76,12 +80,7 @@ switch ($uri) {
             echo json_encode($resultado);
         } catch (\Exception $e) {
             returnError( $e->getMessage() );
-        }
-        $tipoTorneo = isset($_POST['tipo']) ? $_POST['tipo'] : null;
-        $jugadoresParam = isset($_POST['jugadores']) ? $_POST['jugadores'] : null;
-        $jugadores = [];
-
-     
+        }     
         
         break;
         
